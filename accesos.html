@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestión de Citas — Nexus Guard</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+  
+  <div class="notif-container" id="notif-container"></div>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="assets/logo.svg" alt="Nexus Guard" style="width:160px"/>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html"   class="nav-link">📊 Dashboard</a>
+      <a href="accesos.html" class="nav-link active">📅 Gestión de Citas</a>
+      <a onclick="cerrarSesion()" class="nav-link logout" style="cursor:pointer">🔓 Cerrar Sesión</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div>
+        <a href="index.html" style="display:inline-flex; align-items:center; gap:6px;
+          color:#888; font-size:0.82rem; text-decoration:none; margin-bottom:6px">
+          ← Regresar al Dashboard
+        </a>
+        <h1>Gestión de Citas</h1>
+      </div>
+      <button class="btn btn-purple" id="btn-nuevo">+ Nuevo Registro</button>
+    </header>
+
+    <!-- FORMULARIO -->
+    <section class="form-container" id="formulario" style="display:none">
+      <h2 id="form-titulo">Nueva Cita</h2>
+      <input type="hidden" id="cita-id"/>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Vigilante</label>
+          <input type="text" id="vigilante" placeholder="Nombre del vigilante"/>
+        </div>
+        <div class="form-group">
+  <label>Empleado a Visitar</label>
+  <select id="empleadoVisitar">
+    <option value="">Selecciona al empleado</option>
+    <option>Jesus Ramón Camarillo Núñez</option>
+    <option>Marco Gerardo Ceballos Valdez</option>
+    <option>Jesus Enrique Felix Olea</option>
+    <option>Claudia Guadalupe Romero</option>
+    <option>Ignacio Sanz Hernandez</option>
+    <option>José Luis Toscano Sosa</option>
+  </select>
+</div>
+        <div class="form-group">
+          <label>Visitante</label>
+          <input type="text" id="visitante" placeholder="Nombre del visitante"/>
+        </div>
+        <div class="form-group">
+          <label>Empresa</label>
+          <input type="text" id="empresa" placeholder="Empresa del visitante"/>
+        </div>
+        <div class="form-group">
+          <label>Correo del Visitante</label>
+          <input type="email" id="correo" placeholder="correo@empresa.com"/>
+        </div>
+        <div class="form-group">
+          <label>Fecha</label>
+          <input type="date" id="fecha"/>
+        </div>
+        <div class="form-group">
+          <label>Hora</label>
+          <input type="time" id="hora"/>
+        </div>
+        <div class="form-group" style="grid-column: span 2">
+          <label>Motivo de Visita</label>
+          <textarea id="motivo" rows="3" placeholder="Describe el motivo de la visita..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Estado</label>
+          <select id="estado">
+            <option value="Pendiente">⏳ Pendiente</option>
+            <option value="Confirmada">✅ Confirmada</option>
+            <option value="Rechazada">❌ Rechazada</option>
+          </select>
+        </div>
+      </div>
+
+      <p id="form-error"
+        style="color:#E74C3C; font-size:0.82rem; margin-top:10px; display:none">
+        Por favor llena todos los campos obligatorios
+      </p>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" id="btn-guardar">💾 Guardar</button>
+        <button class="btn" style="background:#eee; color:#333" id="btn-cancelar">Cancelar</button>
+      </div>
+    </section>
+
+    <!-- TABLA -->
+     
+     <!-- BUSCADOR -->
+    <section class="table-section" style="margin-bottom:16px; padding:16px 24px">
+      <div style="display:flex; align-items:center; gap:12px">
+        <span style="font-size:1.1rem">🔍</span>
+        <input type="text" id="buscador" placeholder="Buscar por visitante, vigilante, empresa o estado..."
+          style="width:100%; padding:10px 14px; border:1.5px solid #DDE1E7;
+          border-radius:8px; font-size:0.9rem; outline:none"/>
+      </div>
+    </section>
+    <section class="table-section">
+      <div style="overflow-x: auto;"></div>
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Vigilante</th>
+            <th>Empleado a Visitar</th>
+            <th>Visitante</th>
+            <th>Empresa</th>
+            <th>Fecha / Hora</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-citas">
+          <tr>
+            <td colspan="7"
+              style="text-align:center; color:#aaa; padding:30px">
+              Cargando...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+  if (!localStorage.getItem('token')) {
+    window.location.href = 'login.html';
+  }
+</script>
+
+  <script src="js/accesos.js"></script>
+  
+  <script>
+  function cerrarSesion() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    window.location.href = 'login.html';
+  }
+</script>
+</body>
+</html>

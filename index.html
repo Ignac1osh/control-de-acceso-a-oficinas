@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — Nexus Guard</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+
+  <div class="notif-container" id="notif-container"></div>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="assets/logo.svg" alt="Nexus Guard" style="width:160px"/>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html"   class="nav-link active">📊 Dashboard</a>
+      <a href="accesos.html" class="nav-link">📅 Gestión de Citas</a>
+      <a onclick="cerrarSesion()" class="nav-link logout" style="cursor:pointer">🔓 Cerrar Sesión</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div>
+        <h1>Mis Citas del Día</h1>
+        <p style="color:#888; font-size:0.85rem; margin-top:4px" id="fecha-hoy"></p>
+      </div>
+      <span class="user-info">👤 <strong id="usuario-nombre">Usuario</strong></span>
+    </header>
+
+    <!-- TARJETAS -->
+    <section class="cards-grid">
+      <div class="card card-accent">
+        <h3>Citas de Hoy</h3>
+        <p class="card-number" id="citas-hoy">—</p>
+      </div>
+      <div class="card card-blue">
+        <h3>Citas del Mes</h3>
+        <p class="card-number" id="citas-mes">—</p>
+      </div>
+      <div class="card card-purple">
+        <h3>Aprobación Pdte.</h3>
+        <p class="card-number" id="citas-pendientes">—</p>
+      </div>
+      <a href="accesos.html" class="card card-action">
+        📅 Gestión<br/>de Citas
+      </a>
+    </section>
+
+    <!-- PRÓXIMAS CITAS -->
+    <section class="table-section">
+      <h2>Próximas Citas</h2>
+      <div id="lista-citas">
+        <p style="color:#aaa; text-align:center; padding:30px">
+          Cargando citas...
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    function cerrarSesion() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('usuario');
+  window.location.href = 'login.html';
+}
+
+    // Fecha de hoy
+    function formatearFecha(fecha) {
+  if (!fecha) return '—';
+  const [anio, mes, dia] = fecha.split('-');
+  return `${dia}/${mes}/${anio}`;
+}
+
+// Protección de ruta
+if (!localStorage.getItem('token')) {
+  window.location.href = 'login.html';
+}
+    const opciones = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+    document.getElementById('fecha-hoy').textContent =
+      'Hoy es ' + new Date().toLocaleDateString('es-MX', opciones);
+
+    // Nombre usuario
+    const nombre = localStorage.getItem('usuario');
+    
+    if (nombre) document.getElementById('usuario-nombre').textContent = nombre;
+
+    async function cargarDashboard() {
+      document.getElementById('lista-citas').innerHTML = `
+      <div class="spinner-overlay">
+        <div class="spinner"></div>
+        <span>Cargando citas...</span>
+      </div>`;
+      try {
+        const res   = await fetch('http://localhost:3000/api/accesos');
+        const citas = await res.json();
+
+        const hoy = new Date().toISOString().split('T')[0];
+        const mes = new Date().getMonth();
+
+        const citasHoy       = citas.filter(c => c.fecha === hoy);
+        const citasMes       = citas.filter(c => new Date(c.fecha).getMonth() === mes);
+        const citasPendientes = citas.filter(c => c.estado === 'Pendiente');
+
+        document.getElementById('citas-hoy').textContent       = citasHoy.length;
+        document.getElementById('citas-mes').textContent       = citasMes.length;
+        document.getElementById('citas-pendientes').textContent = citasPendientes.length;
+
+        // Próximas citas
+        const proximas = citas.slice(-5).reverse();
+        const lista    = document.getElementById('lista-citas');
+
+        if (proximas.length === 0) {
+          lista.innerHTML = '<p style="color:#aaa;text-align:center;padding:30px">Sin citas registradas</p>';
+          return;
+        }
+
+        lista.innerHTML = proximas.map(c => `
+          <div style="display:flex; justify-content:space-between; align-items:center;
+            padding:16px 0; border-bottom:1px solid #eee">
+            <div style="display:flex; gap:16px; align-items:center">
+              <div style="text-align:center; min-width:60px">
+                <div style="font-weight:700; font-size:0.85rem">${formatearFecha(c.fecha)} ${c.hora || '—'}</div>
+                <div style="font-size:0.75rem; color:#aaa">1hr</div>
+              </div>
+              <div>
+                <div style="font-weight:700; font-size:0.9rem">${c.visitante || c.nombre}</div>
+                <div style="font-size:0.8rem; color:#888">${c.empresa || ''}</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center">
+              <span class="badge badge-${(c.estado || 'pendiente').toLowerCase()}">
+                ${c.estado || 'Pendiente'}
+              </span>
+              ${c.estado === 'Pendiente' ? `
+                <button class="btn btn-success btn-sm"
+                  onclick="aprobar('${c._id || c.id}')">✓ Aprobar</button>
+                <button class="btn btn-danger btn-sm"
+                  onclick="rechazar('${c._id || c.id}')">✕ Rechazar</button>
+              ` : ''}
+            </div>
+          </div>
+        `).join('');
+
+      } catch (err) {
+        document.getElementById('citas-hoy').textContent       = '—';
+        document.getElementById('citas-mes').textContent       = '—';
+        document.getElementById('citas-pendientes').textContent = '—';
+        document.getElementById('lista-citas').innerHTML =
+          '<p style="color:#aaa;text-align:center;padding:30px">⚠️ Servidor no disponible</p>';
+      }
+    }
+
+    async function aprobar(id) {
+      await fetch(`http://localhost:3000/api/accesos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: 'Confirmada' })
+      });
+      cargarDashboard();
+    }
+
+    async function rechazar(id) {
+      await fetch(`http://localhost:3000/api/accesos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: 'Rechazada' })
+      });
+      cargarDashboard();
+    }
+
+    cargarDashboard();
+  </script>
+
+</body>
+</html>

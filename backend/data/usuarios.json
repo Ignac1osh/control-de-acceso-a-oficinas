@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "nombre": "Jesus Ramón Camarillo Núñez",
+    "email": "jcamarillo@nexusguard.com",
+    "password": "$2b$10$DohfU0W4AYezqQgUvQmmIO8/CiDk7gQwOwzI3mxgLKEXMbf78Quxu"
+  },
+  {
+    "id": "2",
+    "nombre": "Marco Gerardo Ceballos Valdez",
+    "email": "mceballos@nexusguard.com",
+    "password": "$2b$10$DohfU0W4AYezqQgUvQmmIO8/CiDk7gQwOwzI3mxgLKEXMbf78Quxu"
+  },
+  {
+    "id": "3",
+    "nombre": "Jesus Enrique Felix Olea",
+    "email": "jfelix@nexusguard.com",
+    "password": "$2b$10$DohfU0W4AYezqQgUvQmmIO8/CiDk7gQwOwzI3mxgLKEXMbf78Quxu"
+  },
+  {
+    "id": "4",
+    "nombre": "Claudia Guadalupe Romero",
+    "email": "cromero@nexusguard.com",
+    "password": "$2b$10$DohfU0W4AYezqQgUvQmmIO8/CiDk7gQwOwzI3mxgLKEXMbf78Quxu"
+  },
+  {
+    "id": "5",
+    "nombre": "Ignacio Sanz Hernandez",
+    "email": "isanz@nexusguard.com",
+    "password": "$2b$10$DohfU0W4AYezqQgUvQmmIO8/CiDk7gQwOwzI3mxgLKEXMbf78Quxu"
+  },
+  {
+    "id": "6",
+    "nombre": "José Luis Toscano Sosa",
+    "email": "jltoscano@nexusguard.com",
+    "password": "$2b$10$DohfU0W4AYezqQgUvQmmIO8/CiDk7gQwOwzI3mxgLKEXMbf78Quxu"
+  }
+]

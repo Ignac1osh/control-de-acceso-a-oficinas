@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — Nexus Guard</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="login-page">
+
+  <div class="login-card">
+
+    <!-- MARCA -->
+    <!-- MARCA -->
+    <div style="text-align:center; margin-bottom:20px">
+      <img src="assets/logo.svg" alt="Nexus Guard" style="width:330px"/>
+    </div>
+    <p class="login-subtitle">Ingresa tus credenciales para continuar</p>
+
+    <!-- CORREO -->
+    <div class="form-group" style="margin-bottom:14px">
+      <div class="input-icon">
+        <span class="icon">✉️</span>
+        <input type="email" id="email" placeholder="Usuario@empresa.com"/>
+      </div>
+    </div>
+
+    <!-- CONTRASEÑA -->
+    <div class="form-group">
+      <div class="input-icon">
+        <span class="icon">🔒</span>
+        <input type="password" id="password" placeholder="••••••••" id="pass"/>
+        <button class="input-eye" onclick="togglePass()"></button>
+      </div>
+    </div>
+
+    <!-- RECORDARME + OLVIDASTE -->
+    <div class="login-options">
+      <label>
+        <input type="checkbox" id="recordar"/>
+        Recordarme
+      </label>
+      <a href="recuperar.html">¿Olvidaste tu contraseña?</a>
+    </div>
+
+    <!-- ERROR -->
+    <p id="error-msg" style="color:#E74C3C; font-size:0.82rem; margin-bottom:10px; display:none"></p>
+
+    <!-- BOTÓN LOGIN -->
+    <button class="login-btn" id="btn-login">Iniciar sesión</button>
+
+    <!-- EXTERNO -->
+    <p class="login-externo">
+      ¿Eres externo? <a href="cita.html">Solicita una cita aquí</a>
+    </p>
+
+    <!-- REDES SOCIALES -->
+    <div class="login-social">
+      <a href="#" class="social-icon social-yt">
+        <i class="fa-brands fa-youtube"></i>
+      </a>
+      <a href="#" class="social-icon social-ig">
+        <i class="fa-brands fa-instagram"></i>
+      </a>
+      <a href="#" class="social-icon social-fb">
+        <i class="fa-brands fa-facebook-f"></i>
+      </a>
+    </div>
+
+  </div>
+
+  <script>
+
+    // Si ya hay sesión activa, ir directo al dashboard
+if (localStorage.getItem('token')) {
+  window.location.href = 'index.html';
+}
+    function togglePass() {
+      const input = document.getElementById('password');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    document.getElementById('btn-login').addEventListener('click', async () => {
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorMsg = document.getElementById('error-msg');
+
+      errorMsg.style.display = 'none';
+
+      if (!email || !password) {
+        errorMsg.textContent   = 'Por favor llena todos los campos';
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      try {
+        const res  = await fetch('http://localhost:3000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          localStorage.setItem('token',   data.token);
+          localStorage.setItem('usuario', data.nombre || email);
+          window.location.href = 'index.html';
+        } else {
+          errorMsg.textContent   = data.mensaje || 'Correo o contraseña incorrectos';
+          errorMsg.style.display = 'block';
+        }
+      } catch (err) {
+        errorMsg.textContent   = 'No se pudo conectar con el servidor';
+        errorMsg.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
