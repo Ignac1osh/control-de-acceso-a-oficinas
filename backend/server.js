@@ -1,18 +1,20 @@
 const express = require('express');
 const cors    = require('cors');
 const app     = express();
+const path   = require('path');
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../')));
 
 // Rutas
 app.use('/api/auth',    require('./routes/auth'));
 app.use('/api/accesos', require('./routes/accesos'));
 
-// Ruta de prueba
+// Ruta de prueba 
 app.get('/', (req, res) => {
-  res.json({ mensaje: '✅ Servidor Nexus Guard funcionando' });
+  res.sendFile(path.join(__dirname, '../login.html'));
 });
 
 // Iniciar servidor
