@@ -1,34 +1,48 @@
 const express = require('express');
-const cors    = require('cors');
-const app     = express();
-app.disable('x-powered-by');
-const path   = require('path');
+const cors = require('cors');
+const helmet = require('helmet'); // Importación de seguridad para SonarQube
+const path = require('path');
+const authRoutes = require('./routes/auth');
+const accesosRoutes = require('./routes/accesos');
 
-// Middlewares
-app.use(cors({
-  origin: ['http://127.0.0.1:5500', 'http://localhost:5500'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+const app = express();
+
+// Oculta la huella digital del servidor para mitigar vulnerabilidades
+app.disable('x-powered-by'); 
+
+// Configuración de Middlewares de seguridad y comunicación
+app.use(cors());
+app.use(helmet()); 
+
+// Procesadores de datos para peticiones del cuerpo (Body)
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../')));
+app.use(express.urlencoded({ extended: true }));
 
-// Rutas
-app.use('/api/auth',    require('./routes/auth'));
-app.use('/api/accesos', require('./routes/accesos'));
+// Servir archivos estáticos del frontend (sube un nivel para encontrar las carpetas)
+app.use('/css', express.static(path.join(__dirname, '../css')));
+app.use('/js', express.static(path.join(__dirname, '../js')));
+app.use('/assets', express.static(path.join(__dirname, '../assets')));
 
-// Ruta de prueba 
+// Enrutamiento de la API REST
+app.use('/api/auth', authRoutes);
+app.use('/api/accesos', accesosRoutes);
+
+// Servir las páginas HTML principales
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../login.html'));
+    res.sendFile(path.join(__dirname, '../login.html'));
 });
 
-// Iniciar servidor
-const PORT = 3000;
+app.get('/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, '../accesos.html'));
+});
 
-// Manejo de rutas no encontradas (404)
+// Manejo de errores 404 (Ruta no encontrada)
 app.use((req, res) => {
-    res.status(404).send('<h1>404 - No encontrado</h1><p>El recurso solicitado no existe en este servidor.</p>');
+    res.status(404).sendFile(path.join(__dirname, '../404.html'));
 });
+
+// Inicialización del servidor local
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`Servidor Nexus Guard corriendo perfectamente en http://localhost:${PORT}`);
 });
