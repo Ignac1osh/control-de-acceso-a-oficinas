@@ -99,7 +99,8 @@ if (!localStorage.getItem('token')) {
         const res   = await fetch('http://localhost:3000/api/accesos');
         const citas = await res.json();
 
-        const hoy = new Date().toISOString().split('T')[0];
+        const ahora = new Date();
+        const hoy = `${ahora.getFullYear()}-${String(ahora.getMonth()+1).padStart(2,'0')}-${String(ahora.getDate()).padStart(2,'0')}`;
         const mes = new Date().getMonth();
 
         const citasHoy       = citas.filter(c => c.fecha === hoy);

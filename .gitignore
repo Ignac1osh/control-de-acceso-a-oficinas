@@ -1,1 +1,5 @@
 node_modules/
+backend/.env
+backend/node_modules/
+backend/data/usuarios.json
+backend/data/accesos.json

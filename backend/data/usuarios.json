@@ -34,5 +34,13 @@
     "nombre": "José Luis Toscano Sosa",
     "email": "jltoscano@nexusguard.com",
     "password": "$2b$10$2N7FN1Mjd48yr9F7BunFEevkuKK83FTv3e3YJ.w7n6NtfrkDC3o6W"
+  },
+  {
+    "id": "7",
+    "nombre": "Fidel Bojorquez Solis",
+    "email": "fbojorquez@nexusguard.com",
+    "password": "$2b$10$2N7FN1Mjd48yr9F7BunFEevkuKK83FTv3e3YJ.w7n6NtfrkDC3o6W"
   }
+
+    
 ]

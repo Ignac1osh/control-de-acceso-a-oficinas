@@ -14,6 +14,7 @@ async function setup() {
     { id: '4', nombre: 'Claudia Guadalupe Romero',      email: 'cromero@nexusguard.com',    password },
     { id: '5', nombre: 'Ignacio Sanz Hernandez',        email: 'isanz@nexusguard.com',      password },
     { id: '6', nombre: 'José Luis Toscano Sosa',        email: 'jltoscano@nexusguard.com',   password },
+    { id: '7', nombre: 'Fidel Bojorquez Solis',         email: 'fbojorquez@nexusguard.com', password },
   ];
 
   fs.writeFileSync(usuariosPath, JSON.stringify(empleados, null, 2));

@@ -5,7 +5,8 @@ const fs       = require('fs');
 const path     = require('path');
 const router   = express.Router();
 
-const SECRET       = 'nexusguard_secret_2024';
+require('dotenv').config();
+const SECRET = process.env.JWT_SECRET;
 const usuariosPath = path.join(__dirname, '../data/usuarios.json');
 
 // Códigos temporales en memoria
@@ -112,7 +113,7 @@ router.post('/verificar-correo', (req, res) => {
   // Guardar en memoria, NO en archivo (evita que Live Server recargue)
   codigosTemporal[email] = codigo;
 
-  console.log(`📧 Código para ${email}: ${codigo}`);
+console.log(`📧 Código generado exitosamente`);
 
   res.json({ codigo, mensaje: 'Código generado exitosamente' });
 });
