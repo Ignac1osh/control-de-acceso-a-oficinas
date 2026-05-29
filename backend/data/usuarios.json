@@ -3,44 +3,42 @@
     "id": "1",
     "nombre": "Jesus Ramón Camarillo Núñez",
     "email": "jcamarillo@nexusguard.com",
-    "password": "$2b$10$2N7FN1Mjd48yr9F7BunFEevkuKK83FTv3e3YJ.w7n6NtfrkDC3o6W"
+    "password": "$2b$10$PzMuzy2U2LeBuOBsQ7kCUef6T6v4Rfnyk7MaBEOBIRauaZiG3dnh."
   },
   {
     "id": "2",
     "nombre": "Marco Gerardo Ceballos Valdez",
     "email": "mceballos@nexusguard.com",
-    "password": "$2b$10$2N7FN1Mjd48yr9F7BunFEevkuKK83FTv3e3YJ.w7n6NtfrkDC3o6W"
+    "password": "$2b$10$PzMuzy2U2LeBuOBsQ7kCUef6T6v4Rfnyk7MaBEOBIRauaZiG3dnh."
   },
   {
     "id": "3",
     "nombre": "Jesus Enrique Felix Olea",
     "email": "jfelix@nexusguard.com",
-    "password": "$2b$10$2N7FN1Mjd48yr9F7BunFEevkuKK83FTv3e3YJ.w7n6NtfrkDC3o6W"
+    "password": "$2b$10$PzMuzy2U2LeBuOBsQ7kCUef6T6v4Rfnyk7MaBEOBIRauaZiG3dnh."
   },
   {
     "id": "4",
     "nombre": "Claudia Guadalupe Romero",
     "email": "cromero@nexusguard.com",
-    "password": "$2b$10$2N7FN1Mjd48yr9F7BunFEevkuKK83FTv3e3YJ.w7n6NtfrkDC3o6W"
+    "password": "$2b$10$PzMuzy2U2LeBuOBsQ7kCUef6T6v4Rfnyk7MaBEOBIRauaZiG3dnh."
   },
   {
     "id": "5",
     "nombre": "Ignacio Sanz Hernandez",
     "email": "isanz@nexusguard.com",
-    "password": "$2b$10$2N7FN1Mjd48yr9F7BunFEevkuKK83FTv3e3YJ.w7n6NtfrkDC3o6W"
+    "password": "$2b$10$PzMuzy2U2LeBuOBsQ7kCUef6T6v4Rfnyk7MaBEOBIRauaZiG3dnh."
   },
   {
     "id": "6",
     "nombre": "José Luis Toscano Sosa",
     "email": "jltoscano@nexusguard.com",
-    "password": "$2b$10$2N7FN1Mjd48yr9F7BunFEevkuKK83FTv3e3YJ.w7n6NtfrkDC3o6W"
+    "password": "$2b$10$PzMuzy2U2LeBuOBsQ7kCUef6T6v4Rfnyk7MaBEOBIRauaZiG3dnh."
   },
   {
     "id": "7",
     "nombre": "Fidel Bojorquez Solis",
     "email": "fbojorquez@nexusguard.com",
-    "password": "$2b$10$2N7FN1Mjd48yr9F7BunFEevkuKK83FTv3e3YJ.w7n6NtfrkDC3o6W"
+    "password": "$2b$10$PzMuzy2U2LeBuOBsQ7kCUef6T6v4Rfnyk7MaBEOBIRauaZiG3dnh."
   }
-
-    
 ]
