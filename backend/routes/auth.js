@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express  = require('express');
 const bcrypt   = require('bcryptjs');
 const jwt      = require('jsonwebtoken');
@@ -5,21 +6,11 @@ const fs       = require('fs');
 const path     = require('path');
 const router   = express.Router();
 
-require('dotenv').config();
-const SECRET = process.env.JWT_SECRET;
+const SECRET       = process.env.JWT_SECRET || 'clave_temporal';
 const usuariosPath = path.join(__dirname, '../data/usuarios.json');
 
 // Códigos temporales en memoria
 const codigosTemporal = {};
-
-const empleadosAutorizados = [
-  { nombre: 'Jesus Ramón Camarillo Núñez',   email: 'jcamarillo@nexusguard.com' },
-  { nombre: 'Marco Gerardo Ceballos Valdez',  email: 'mceballos@nexusguard.com' },
-  { nombre: 'Jesus Enrique Felix Olea',       email: 'jfelix@nexusguard.com' },
-  { nombre: 'Claudia Guadalupe Romero',       email: 'cromero@nexusguard.com' },
-  { nombre: 'Ignacio Sanz Hernandez',         email: 'isanz@nexusguard.com' },
-  { nombre: 'José Luis Toscano Sosa',         email: 'jtoscano@nexusguard.com' },
-];
 
 function leerUsuarios() {
   const data = fs.readFileSync(usuariosPath, 'utf-8');
@@ -29,45 +20,6 @@ function leerUsuarios() {
 function guardarUsuarios(usuarios) {
   fs.writeFileSync(usuariosPath, JSON.stringify(usuarios, null, 2));
 }
-
-// ── POST /api/auth/registro ──
-router.post('/registro', async (req, res) => {
-  const { nombre, email, password } = req.body;
-
-  if (!nombre || !email || !password) {
-    return res.status(400).json({ mensaje: 'Todos los campos son obligatorios' });
-  }
-
-  // Verificar si el correo está en la lista de autorizados
-  const autorizado = empleadosAutorizados.find(e => e.email === email.toLowerCase());
-  if (!autorizado) {
-    return res.status(403).json({ 
-      mensaje: 'Este correo no está autorizado para registrarse en el sistema' 
-    });
-  }
-
-  const usuarios = leerUsuarios();
-  const existe   = usuarios.find(u => u.email === email);
-
-  if (existe) {
-    return res.status(400).json({ mensaje: 'Este correo ya está registrado' });
-  }
-
-  const hash = await bcrypt.hash(password, 10);
-
-  const nuevoUsuario = {
-    id: Date.now().toString(),
-    nombre,
-    email,
-    password: hash,
-    creadoEn: new Date().toISOString()
-  };
-
-  usuarios.push(nuevoUsuario);
-  guardarUsuarios(usuarios);
-
-  res.status(201).json({ mensaje: 'Usuario registrado exitosamente' });
-});
 
 // ── POST /api/auth/login ──
 router.post('/login', async (req, res) => {
@@ -110,10 +62,11 @@ router.post('/verificar-correo', (req, res) => {
 
   const codigo = Math.floor(1000 + Math.random() * 9000).toString();
 
-  // Guardar en memoria, NO en archivo (evita que Live Server recargue)
+  // Guardar en memoria, NO en archivo
   codigosTemporal[email] = codigo;
 
-console.log(`📧 Código generado exitosamente`);
+  // ✅ No se registra el código ni el correo del usuario en logs
+  console.log('Código de recuperación generado correctamente');
 
   res.json({ codigo, mensaje: 'Código generado exitosamente' });
 });
@@ -130,7 +83,6 @@ router.post('/cambiar-password', async (req, res) => {
 
   usuarios[index].password = await bcrypt.hash(password, 10);
   guardarUsuarios(usuarios);
-
   delete codigosTemporal[email];
 
   res.json({ mensaje: 'Contraseña actualizada exitosamente' });
