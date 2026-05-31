@@ -54,10 +54,7 @@
     <!-- BOTÓN LOGIN -->
     <button class="login-btn" id="btn-login">Iniciar sesión</button>
 
-    <!-- EXTERNO -->
-    <p class="login-externo">
-      ¿Eres externo? <a href="cita.html">Solicita una cita aquí</a>
-    </p>
+    
 
     <!-- REDES SOCIALES -->
     <div class="login-social">
@@ -107,10 +104,17 @@ if (localStorage.getItem('token')) {
         const data = await res.json();
 
         if (res.ok) {
-          localStorage.setItem('token',   data.token);
-          localStorage.setItem('usuario', data.nombre || email);
-          window.location.href = 'index.html';
-        } else {
+  localStorage.setItem('token',   data.token);
+  localStorage.setItem('usuario', data.nombre || email);
+  localStorage.setItem('rol',     data.rol);
+
+  // Redirigir según rol
+  if (data.rol === 'vigilante') {
+    window.location.href = 'vigilante.html';
+  } else {
+    window.location.href = 'index.html';
+  }
+} else {
           errorMsg.textContent   = data.mensaje || 'Correo o contraseña incorrectos';
           errorMsg.style.display = 'block';
         }

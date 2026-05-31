@@ -31,6 +31,8 @@ app.use(express.json());
 // Rutas
 app.use('/api/auth',    require('./routes/auth'));
 app.use('/api/accesos', require('./routes/accesos'));
+app.use('/api/usuarios', require('./routes/usuarios'));
+app.use('/api/bitacora', require('./routes/bitacora'));
 
 // Ruta de prueba
 app.get('/', (req, res) => {

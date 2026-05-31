@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { registrarMovimiento } = require('./bitacora');
 const express  = require('express');
 const bcrypt   = require('bcryptjs');
 const jwt      = require('jsonwebtoken');
@@ -9,7 +10,6 @@ const router   = express.Router();
 const SECRET       = process.env.JWT_SECRET || 'clave_temporal';
 const usuariosPath = path.join(__dirname, '../data/usuarios.json');
 
-// Códigos temporales en memoria
 const codigosTemporal = {};
 
 function leerUsuarios() {
@@ -42,30 +42,33 @@ router.post('/login', async (req, res) => {
   }
 
   const token = jwt.sign(
-    { id: usuario.id, nombre: usuario.nombre, email: usuario.email },
+    { id: usuario.id, nombre: usuario.nombre, email: usuario.email, rol: usuario.rol },
     SECRET,
     { expiresIn: '8h' }
   );
 
-  res.json({ token, nombre: usuario.nombre, email: usuario.email });
+  registrarMovimiento({
+  usuario: usuario.nombre,
+  accion:  'LOGIN',
+  detalle: `Inicio de sesion: ${usuario.email}`
+});
+
+  res.json({ token, nombre: usuario.nombre, email: usuario.email, rol: usuario.rol });
 });
 
 // ── POST /api/auth/verificar-correo ──
 router.post('/verificar-correo', (req, res) => {
-  const { email }  = req.body;
-  const usuarios   = leerUsuarios();
-  const usuario    = usuarios.find(u => u.email === email);
+  const { email } = req.body;
+  const usuarios  = leerUsuarios();
+  const usuario   = usuarios.find(u => u.email === email);
 
   if (!usuario) {
     return res.status(404).json({ mensaje: 'Correo no registrado' });
   }
 
   const codigo = Math.floor(1000 + Math.random() * 9000).toString();
-
-  // Guardar en memoria, NO en archivo
   codigosTemporal[email] = codigo;
 
-  // ✅ No se registra el código ni el correo del usuario en logs
   console.log('Código de recuperación generado correctamente');
 
   res.json({ codigo, mensaje: 'Código generado exitosamente' });
@@ -84,6 +87,12 @@ router.post('/cambiar-password', async (req, res) => {
   usuarios[index].password = await bcrypt.hash(password, 10);
   guardarUsuarios(usuarios);
   delete codigosTemporal[email];
+
+  registrarMovimiento({
+  usuario: usuarios[index].nombre,
+  accion:  'CAMBIO_PASSWORD',
+  detalle: `Cambio de contrasena para: ${email}`
+});
 
   res.json({ mensaje: 'Contraseña actualizada exitosamente' });
 });

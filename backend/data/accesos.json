@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "1780264316030",
+    "vigilante": "vigilancia1",
+    "empleadoVisitar": "Jesus Enrique Felix Olea",
+    "visitante": "juan garcia",
+    "empresa": "tomasco",
+    "correo": "user@user.com",
+    "fecha": "2026-05-31",
+    "hora": "15:30",
+    "motivo": "ventas",
+    "estado": "Confirmada",
+    "folio": "SGC-3620",
+    "creadoEn": "2026-05-31T21:51:56.030Z"
+  }
+]

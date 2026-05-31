@@ -15,10 +15,12 @@
       <img src="assets/logo.svg" alt="Nexus Guard" style="width:160px"/>
     </div>
     <nav class="sidebar-nav">
-      <a href="index.html"   class="nav-link active">📊 Dashboard</a>
-      <a href="accesos.html" class="nav-link">📅 Gestión de Citas</a>
-      <a onclick="cerrarSesion()" class="nav-link logout" style="cursor:pointer">🔓 Cerrar Sesión</a>
-    </nav>
+  <a href="index.html"    class="nav-link active">📊 Dashboard</a>
+  <a href="accesos.html"  class="nav-link">📅 Gestión de Citas</a>
+  <a href="usuarios.html" class="nav-link">👥 Gestión de Usuarios</a>
+  <a href="bitacora.html" class="nav-link">📋 Bitácora</a>
+  <a onclick="cerrarSesion()" class="nav-link logout" style="cursor:pointer">🔓 Cerrar Sesión</a>
+</nav>
   </aside>
 
   <main class="main-content">
@@ -79,6 +81,9 @@
 // Protección de ruta
 if (!localStorage.getItem('token')) {
   window.location.href = 'login.html';
+}
+if (localStorage.getItem('rol') === 'vigilante') {
+  window.location.href = 'vigilante.html';
 }
     const opciones = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
     document.getElementById('fecha-hoy').textContent =

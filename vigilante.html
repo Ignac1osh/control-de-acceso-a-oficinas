@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel Vigilante — Nexus Guard</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+
+  <div class="notif-container" id="notif-container"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="assets/logo.svg" alt="Nexus Guard" style="width:160px"
+        style="width:160px; filter:brightness(0) invert(1)"/>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="vigilante.html" class="nav-link active">👮 Mi Panel</a>
+      <a href="vigilante.html#validar" class="nav-link">🔍 Validar Folio</a>
+      <a href="vigilante.html#no-programada" class="nav-link">➕ Visita No Programada</a>
+      <a onclick="cerrarSesion()" class="nav-link logout" style="cursor:pointer">
+        🔓 Cerrar Sesión
+      </a>
+    </nav>
+  </aside>
+
+  <!-- CONTENIDO -->
+  <main class="main-content">
+
+    <header class="topbar">
+      <div>
+        <h1>Panel de Vigilante</h1>
+        <p style="color:#888; font-size:0.85rem; margin-top:4px" id="fecha-hoy"></p>
+      </div>
+      <span class="user-info">👮 <strong id="usuario-nombre">Vigilante</strong></span>
+    </header>
+
+    <!-- TARJETAS -->
+    <section class="cards-grid" style="grid-template-columns: repeat(3,1fr)">
+      <div class="card card-accent">
+        <h3>Citas Hoy</h3>
+        <p class="card-number" id="citas-hoy">—</p>
+      </div>
+      <div class="card card-blue">
+        <h3>Confirmadas</h3>
+        <p class="card-number" id="citas-confirmadas">—</p>
+      </div>
+      <div class="card card-purple">
+        <h3>Pendientes</h3>
+        <p class="card-number" id="citas-pendientes">—</p>
+      </div>
+    </section>
+
+    <!-- VALIDAR FOLIO -->
+    <section class="table-section" id="validar" style="margin-bottom:20px">
+      <h2>🔍 Validar Acceso por Folio</h2>
+      <div style="display:flex; gap:12px; margin-top:12px">
+        <input type="text" id="input-folio" placeholder="Ingresa el folio (ej. SGC-8472)"
+          style="flex:1; padding:10px 14px; border:1.5px solid #DDE1E7;
+          border-radius:8px; font-size:0.9rem"/>
+        <button class="btn btn-primary" onclick="validarFolio()">
+          🔍 Validar
+        </button>
+      </div>
+
+      <!-- Resultado de validación -->
+      <div id="resultado-validacion" style="display:none; margin-top:16px">
+        <div id="tarjeta-validacion" style="padding:20px; border-radius:12px">
+        </div>
+      </div>
+    </section>
+
+    <!-- CITAS DEL DÍA -->
+    <section class="table-section" style="margin-bottom:20px">
+      <h2>📅 Citas del Día</h2>
+      <div style="display:flex; gap:10px; margin:12px 0">
+        <input type="text" id="buscador-vigilante"
+          placeholder="Buscar por nombre o empresa..."
+          style="flex:1; padding:10px 14px; border:1.5px solid #DDE1E7;
+          border-radius:8px; font-size:0.9rem"/>
+      </div>
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Folio</th>
+            <th>Visitante</th>
+            <th>Empresa</th>
+            <th>Empleado a Visitar</th>
+            <th>Hora</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-vigilante">
+          <tr>
+            <td colspan="7" style="text-align:center;color:#aaa;padding:30px">
+              Cargando...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- VISITA NO PROGRAMADA -->
+    <section class="form-container" id="no-programada">
+      <h2>➕ Registrar Visita No Programada</h2>
+      <p style="color:#888; font-size:0.85rem; margin-bottom:16px">
+        Para visitantes que llegan sin cita previa
+      </p>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre del Visitante</label>
+          <input type="text" id="np-nombre" placeholder="Nombre completo"/>
+        </div>
+        <div class="form-group">
+          <label>Empresa</label>
+          <input type="text" id="np-empresa" placeholder="Empresa del visitante"/>
+        </div>
+        <div class="form-group">
+          <label>Correo</label>
+          <input type="email" id="np-correo" placeholder="correo@empresa.com"/>
+        </div>
+        <div class="form-group">
+          <label>Empleado a Visitar</label>
+          <select id="np-empleado">
+            <option value="">Selecciona al empleado</option>
+            <option>Jesus Ramon Camarillo Nunez</option>
+            <option>Marco Gerardo Ceballos Valdez</option>
+            <option>Jesus Enrique Felix Olea</option>
+            <option>Claudia Guadalupe Romero</option>
+            <option>Ignacio Sanz Hernandez</option>
+            <option>Jose Luis Toscano Sosa</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Motivo de Visita</label>
+          <input type="text" id="np-motivo" placeholder="Motivo de la visita"/>
+        </div>
+        <div class="form-group">
+          <label>Hora de Entrada</label>
+          <input type="time" id="np-hora"/>
+        </div>
+      </div>
+      <p id="np-error"
+        style="color:#E74C3C; font-size:0.82rem; margin-top:10px; display:none">
+        Por favor llena todos los campos obligatorios
+      </p>
+      <div class="form-actions">
+        <button class="btn btn-success" onclick="registrarVisitaNoProgramada()">
+          ✅ Registrar Entrada
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // ── Protección de ruta ──
+    const rolUsuario = localStorage.getItem('rol');
+    if (!localStorage.getItem('token')) {
+      window.location.href = 'login.html';
+    }
+
+    // ── Fecha de hoy ──
+    const ahora = new Date();
+    const dia   = String(ahora.getDate()).padStart(2,'0');
+    const mes   = String(ahora.getMonth()+1).padStart(2,'0');
+    const anio  = ahora.getFullYear();
+    const hoy   = `${anio}-${mes}-${dia}`;
+    document.getElementById('fecha-hoy').textContent = `Hoy es ${dia}/${mes}/${anio}`;
+    document.getElementById('usuario-nombre').textContent =
+      localStorage.getItem('usuario') || 'Vigilante';
+
+    const API_URL = 'http://localhost:3000/api/accesos';
+
+    // ── Notificaciones ──
+    function mostrarNotif(mensaje, tipo = 'success') {
+      const container = document.getElementById('notif-container');
+      const iconos = { success: '✅', error: '❌', info: 'ℹ️' };
+      const notif = document.createElement('div');
+      notif.className = `notif notif-${tipo}`;
+      notif.innerHTML = `<span class="notif-icon">${iconos[tipo]}</span><span>${mensaje}</span>`;
+      notif.onclick = () => notif.remove();
+      container.appendChild(notif);
+      setTimeout(() => notif.remove(), 3000);
+    }
+
+    // ── Cargar citas del día ──
+    async function cargarCitasHoy() {
+      try {
+        const res   = await fetch(API_URL);
+        const citas = await res.json();
+
+        const citasHoy        = citas.filter(c => c.fecha === hoy);
+        const confirmadas     = citasHoy.filter(c => c.estado === 'Confirmada');
+        const pendientes      = citasHoy.filter(c => c.estado === 'Pendiente');
+
+        document.getElementById('citas-hoy').textContent        = citasHoy.length;
+        document.getElementById('citas-confirmadas').textContent = confirmadas.length;
+        document.getElementById('citas-pendientes').textContent  = pendientes.length;
+
+        renderTablaVigilante(citasHoy);
+      } catch (err) {
+        mostrarNotif('No se pudo conectar al servidor', 'error');
+      }
+    }
+
+    function renderTablaVigilante(citas) {
+      const tbody = document.getElementById('tabla-vigilante');
+      if (citas.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7"
+          style="text-align:center;color:#aaa;padding:30px">
+          Sin citas para hoy
+        </td></tr>`;
+        return;
+      }
+      tbody.innerHTML = citas.map(c => `
+        <tr>
+          <td><strong>${c.folio || '—'}</strong></td>
+          <td>${c.visitante || c.nombre || '—'}</td>
+          <td>${c.empresa || '—'}</td>
+          <td>${c.empleadoVisitar || '—'}</td>
+          <td>${c.hora || '—'}</td>
+          <td>
+            <span class="badge badge-${(c.estado||'pendiente').toLowerCase()}">
+              ${c.estado || 'Pendiente'}
+            </span>
+          </td>
+          <td style="display:flex; gap:6px; flex-wrap:wrap">
+            ${!c.horaEntrada ? `
+              <button class="btn btn-success btn-sm"
+                onclick="registrarEntrada('${c.id || c._id}')">
+                ✅ Entrada
+              </button>` : `<span style="font-size:0.78rem;color:#27AE60">
+                ✅ ${c.horaEntrada}</span>`}
+            ${c.horaEntrada && !c.horaSalida ? `
+              <button class="btn btn-danger btn-sm"
+                onclick="registrarSalida('${c.id || c._id}')">
+                🚪 Salida
+              </button>` : ''}
+            ${c.horaSalida ? `<span style="font-size:0.78rem;color:#E74C3C">
+              🚪 ${c.horaSalida}</span>` : ''}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ── Buscador ──
+    document.getElementById('buscador-vigilante').addEventListener('input', function() {
+      const texto = this.value.toLowerCase();
+      const filas = document.querySelectorAll('#tabla-vigilante tr');
+      filas.forEach(fila => {
+        fila.style.display = fila.textContent.toLowerCase().includes(texto) ? '' : 'none';
+      });
+    });
+
+    // ── Validar folio ──
+    async function validarFolio() {
+      const folio    = document.getElementById('input-folio').value.trim().toUpperCase();
+      const resultDiv = document.getElementById('resultado-validacion');
+      const tarjeta  = document.getElementById('tarjeta-validacion');
+
+      if (!folio) {
+        mostrarNotif('Ingresa un folio para validar', 'error');
+        return;
+      }
+
+      try {
+        const res   = await fetch(API_URL);
+        const citas = await res.json();
+        const cita  = citas.find(c => c.folio === folio);
+
+        resultDiv.style.display = 'block';
+
+        if (!cita) {
+          tarjeta.style.background = '#f8d7da';
+          tarjeta.innerHTML = `
+            <h3 style="color:#721c24">❌ Folio no encontrado</h3>
+            <p style="color:#721c24">El folio <strong>${folio}</strong> no existe en el sistema.</p>
+          `;
+          return;
+        }
+
+        const esHoy   = cita.fecha === hoy;
+        const aprobada = cita.estado === 'Confirmada';
+
+        if (esHoy && aprobada) {
+          tarjeta.style.background = '#d4edda';
+          tarjeta.innerHTML = `
+            <h3 style="color:#155724">✅ Acceso Autorizado</h3>
+            <p><strong>Visitante:</strong> ${cita.visitante || cita.nombre}</p>
+            <p><strong>Empresa:</strong> ${cita.empresa || '—'}</p>
+            <p><strong>Visita a:</strong> ${cita.empleadoVisitar || '—'}</p>
+            <p><strong>Hora:</strong> ${cita.hora}</p>
+            <p><strong>Motivo:</strong> ${cita.motivo || '—'}</p>
+            <button class="btn btn-success" style="margin-top:12px"
+              onclick="registrarEntrada('${cita.id || cita._id}')">
+              ✅ Registrar Entrada
+            </button>
+          `;
+        } else if (!esHoy) {
+          tarjeta.style.background = '#fff3cd';
+          tarjeta.innerHTML = `
+            <h3 style="color:#856404">⚠️ Cita no es hoy</h3>
+            <p>La cita con folio <strong>${folio}</strong> es para el
+            <strong>${cita.fecha}</strong>, no para hoy.</p>
+          `;
+        } else {
+          tarjeta.style.background = '#f8d7da';
+          tarjeta.innerHTML = `
+            <h3 style="color:#721c24">❌ Acceso No Autorizado</h3>
+            <p>La cita está en estado: <strong>${cita.estado}</strong></p>
+            <p>Solo se permite acceso a citas <strong>Confirmadas</strong>.</p>
+          `;
+        }
+      } catch (err) {
+        mostrarNotif('Error al validar folio', 'error');
+      }
+    }
+
+    // ── Registrar entrada ──
+    async function registrarEntrada(id) {
+      const ahora = new Date();
+      const hora  = `${String(ahora.getHours()).padStart(2,'0')}:${String(ahora.getMinutes()).padStart(2,'0')}`;
+
+      try {
+        await fetch(`${API_URL}/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ horaEntrada: hora, estado: 'Confirmada' })
+        });
+        mostrarNotif(`✅ Entrada registrada a las ${hora}`, 'success');
+        cargarCitasHoy();
+        document.getElementById('resultado-validacion').style.display = 'none';
+      } catch (err) {
+        mostrarNotif('Error al registrar entrada', 'error');
+      }
+    }
+
+    // ── Registrar salida ──
+    async function registrarSalida(id) {
+      const ahora = new Date();
+      const hora  = `${String(ahora.getHours()).padStart(2,'0')}:${String(ahora.getMinutes()).padStart(2,'0')}`;
+
+      try {
+        await fetch(`${API_URL}/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ horaSalida: hora, estado: 'Finalizada' })
+        });
+        mostrarNotif(`🚪 Salida registrada a las ${hora}`, 'success');
+        cargarCitasHoy();
+      } catch (err) {
+        mostrarNotif('Error al registrar salida', 'error');
+      }
+    }
+
+    // ── Registrar visita no programada ──
+    async function registrarVisitaNoProgramada() {
+      const nombre   = document.getElementById('np-nombre').value.trim();
+      const empresa  = document.getElementById('np-empresa').value.trim();
+      const correo   = document.getElementById('np-correo').value.trim();
+      const empleado = document.getElementById('np-empleado').value;
+      const motivo   = document.getElementById('np-motivo').value.trim();
+      const hora     = document.getElementById('np-hora').value;
+      const errorEl  = document.getElementById('np-error');
+
+      errorEl.style.display = 'none';
+
+      if (!nombre || !empleado || !motivo) {
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      const horaActual = hora || `${String(ahora.getHours()).padStart(2,'0')}:${String(ahora.getMinutes()).padStart(2,'0')}`;
+      const folio      = 'NP-' + Math.floor(1000 + Math.random() * 9000);
+
+      try {
+        await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            visitante:       nombre,
+            empresa,
+            correo,
+            empleadoVisitar: empleado,
+            motivo,
+            fecha:           hoy,
+            hora:            horaActual,
+            horaEntrada:     horaActual,
+            estado:          'Confirmada',
+            folio,
+            tipo:            'No Programada'
+          })
+        });
+
+        mostrarNotif(`✅ Visita registrada. Folio: ${folio}`, 'success');
+
+        // Limpiar formulario
+        ['np-nombre','np-empresa','np-correo','np-motivo','np-hora'].forEach(id => {
+          document.getElementById(id).value = '';
+        });
+        document.getElementById('np-empleado').value = '';
+
+        cargarCitasHoy();
+      } catch (err) {
+        mostrarNotif('Error al registrar la visita', 'error');
+      }
+    }
+
+    // ── Cerrar sesión ──
+    function cerrarSesion() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('usuario');
+      localStorage.removeItem('rol');
+      window.location.href = 'login.html';
+    }
+
+    // ── Iniciar ──
+    cargarCitasHoy();
+  </script>
+
+</body>
+</html>

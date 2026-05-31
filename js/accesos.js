@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function cargarCitas() {
   // Mostrar spinner mientras carga
   document.getElementById('tabla-citas').innerHTML = `
-    <tr><td colspan="8">
+    <tr><td colspan="9">
       <div class="spinner-overlay">
         <div class="spinner"></div>
         <span>Cargando registros...</span>
@@ -56,7 +56,7 @@ async function cargarCitas() {
   } catch (err) {
     
     document.getElementById('tabla-citas').innerHTML = `
-      <tr><td colspan="8"
+      <tr><td colspan="9"
         style="text-align:center;color:#aaa;padding:30px">
         ⚠️ No se pudo conectar al servidor
       </td></tr>`;
@@ -66,16 +66,17 @@ async function cargarCitas() {
 function renderTabla(citas) {
   const tbody = document.getElementById('tabla-citas');
   if (citas.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8"
+    tbody.innerHTML = `<tr><td colspan="9"
       style="text-align:center;color:#aaa;padding:30px">
       Sin registros. Haz clic en "+ Nuevo Registro".
     </td></tr>`;
     return;
   }
   tbody.innerHTML = citas.map((c, i) => `
-    <tr>
-      <td>${i + 1}</td>
-      <td>${c.vigilante       || '—'}</td>
+        <tr>
+            <td>${i + 1}</td>
+            <td>${c.folio || '-'}</td>
+            <td>${c.vigilante || '-'}</td>
       <td>${c.empleadoVisitar || '—'}</td>
       <td>${c.visitante || c.nombre || '—'}</td>
       <td>${c.empresa         || '—'}</td>
@@ -127,19 +128,32 @@ async function guardarCita() {
   }
   errorEl.style.display = 'none';
 
-  const datos  = { vigilante, empleadoVisitar, visitante, empresa, correo, fecha, hora, motivo, estado };
+  // Generar folio automático solo al crear (no al editar)
+const folio = id ? undefined : 'SGC-' + Math.floor(1000 + Math.random() * 9000);
+
+const datos = { vigilante, empleadoVisitar, visitante, empresa, correo, fecha, hora, motivo, estado };
+if (folio) datos.folio = folio;
   const url    = id ? `${API_URL}/${id}` : API_URL;
   const method = id ? 'PUT' : 'POST';
 
   try {
     await fetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
       body: JSON.stringify(datos)
     });
+
     ocultarFormulario();
     cargarCitas();
-    mostrarNotif(id ? 'Cita actualizada correctamente' : 'Cita creada correctamente', 'success');
+
+    if (folio) {
+  mostrarNotif(`✅ Cita creada. Folio: ${folio} — Entrégalo al visitante`, 'success');
+} else {
+  mostrarNotif('Cita actualizada correctamente', 'success');
+}
   } catch (err) {
     mostrarNotif('Error al guardar. Verifica que el servidor esté corriendo.', 'error');
   }
@@ -173,7 +187,13 @@ async function editarCita(id) {
 async function eliminarCita(id) {
   if (!confirm('¿Seguro que deseas eliminar esta cita?')) return;
   try {
-    await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+    await fetch(`${API_URL}/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
     cargarCitas();
     mostrarNotif('Registro eliminado correctamente', 'success');
   } catch (err) {

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bitácora — Nexus Guard</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+
+  <div class="notif-container" id="notif-container"></div>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="assets/logo.svg" alt="Nexus Guard" style="width:160px"/>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html"    class="nav-link">📊 Dashboard</a>
+      <a href="accesos.html"  class="nav-link">📅 Gestión de Citas</a>
+      <a href="usuarios.html" class="nav-link">👥 Gestión de Usuarios</a>
+      <a href="bitacora.html" class="nav-link active">📋 Bitácora</a>
+      <a onclick="cerrarSesion()" class="nav-link logout" style="cursor:pointer">
+        🔓 Cerrar Sesión
+      </a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div>
+        <a href="index.html" style="display:inline-flex; align-items:center; gap:6px;
+          color:#888; font-size:0.82rem; text-decoration:none; margin-bottom:6px">
+          ← Regresar al Dashboard
+        </a>
+        <h1>Bitácora del Sistema</h1>
+      </div>
+      <button class="btn btn-danger" onclick="limpiarBitacora()">
+        🗑️ Limpiar Bitácora
+      </button>
+    </header>
+
+    <!-- TARJETAS -->
+    <section class="cards-grid" style="grid-template-columns:repeat(4,1fr); margin-bottom:20px">
+      <div class="card card-accent">
+        <h3>Total Registros</h3>
+        <p class="card-number" id="total-registros">—</p>
+      </div>
+      <div class="card card-blue">
+        <h3>Logins</h3>
+        <p class="card-number" id="total-logins">—</p>
+      </div>
+      <div class="card card-purple">
+        <h3>Citas</h3>
+        <p class="card-number" id="total-citas">—</p>
+      </div>
+      <div class="card" style="border-left:4px solid #E74C3C">
+        <h3>Usuarios</h3>
+        <p class="card-number" id="total-usuarios-bit">—</p>
+      </div>
+    </section>
+
+    <!-- BUSCADOR -->
+    <section class="table-section" style="margin-bottom:16px; padding:16px 24px">
+      <div style="display:flex; align-items:center; gap:12px">
+        <span>🔍</span>
+        <input type="text" id="buscador" placeholder="Buscar por usuario, acción o detalle..."
+          style="width:100%; padding:10px 14px; border:1.5px solid #DDE1E7;
+          border-radius:8px; font-size:0.9rem"/>
+      </div>
+    </section>
+
+    <!-- TABLA -->
+    <section class="table-section">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Fecha y Hora</th>
+            <th>Usuario</th>
+            <th>Acción</th>
+            <th>Detalle</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-bitacora">
+          <tr>
+            <td colspan="5" style="text-align:center;color:#aaa;padding:30px">
+              Cargando...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <script>
+    // Protección — solo admins
+    if (!localStorage.getItem('token')) {
+      window.location.href = 'login.html';
+    }
+    if (localStorage.getItem('rol') !== 'admin') {
+      window.location.href = 'index.html';
+    }
+
+    const API_URL = 'http://localhost:3000/api/bitacora';
+
+    function mostrarNotif(mensaje, tipo = 'success') {
+      const container = document.getElementById('notif-container');
+      const iconos = { success: '✅', error: '❌', info: 'ℹ️' };
+      const notif = document.createElement('div');
+      notif.className = `notif notif-${tipo}`;
+      notif.innerHTML = `<span class="notif-icon">${iconos[tipo]}</span><span>${mensaje}</span>`;
+      notif.onclick = () => notif.remove();
+      container.appendChild(notif);
+      setTimeout(() => notif.remove(), 3000);
+    }
+
+    const badgeAccion = (accion) => {
+      const mapa = {
+        'LOGIN':           { color: 'badge-confirmada',    icono: '🔐' },
+        'CAMBIO_PASSWORD': { color: 'badge-pendiente',     icono: '🔑' },
+        'CREAR_CITA':      { color: 'badge-confirmada',    icono: '➕' },
+        'EDITAR_CITA':     { color: 'badge-pendiente',     icono: '✏️' },
+        'ELIMINAR_CITA':   { color: 'badge-denegado',      icono: '🗑️' },
+        'CREAR_USUARIO':   { color: 'badge-confirmada',    icono: '👤' },
+        'EDITAR_USUARIO':  { color: 'badge-pendiente',     icono: '✏️' },
+        'ELIMINAR_USUARIO':{ color: 'badge-denegado',      icono: '🗑️' },
+      };
+      const info = mapa[accion] || { color: 'badge-pendiente', icono: '📝' };
+      return `<span class="badge ${info.color}">${info.icono} ${accion}</span>`;
+    };
+
+    async function cargarBitacora() {
+      try {
+        const res       = await fetch(API_URL);
+        const registros = await res.json();
+
+        document.getElementById('total-registros').textContent   = registros.length;
+        document.getElementById('total-logins').textContent      = registros.filter(r => r.accion === 'LOGIN').length;
+        document.getElementById('total-citas').textContent       = registros.filter(r => r.accion.includes('CITA')).length;
+        document.getElementById('total-usuarios-bit').textContent = registros.filter(r => r.accion.includes('USUARIO')).length;
+
+        renderTabla(registros);
+      } catch (err) {
+        mostrarNotif('No se pudo conectar al servidor', 'error');
+      }
+    }
+
+    function renderTabla(registros) {
+      const tbody = document.getElementById('tabla-bitacora');
+      if (registros.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5"
+          style="text-align:center;color:#aaa;padding:30px">
+          Sin registros en la bitácora
+        </td></tr>`;
+        return;
+      }
+      tbody.innerHTML = registros.map((r, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td style="font-size:0.82rem">${r.fechaHora}</td>
+          <td><strong>${r.usuario}</strong></td>
+          <td>${badgeAccion(r.accion)}</td>
+          <td style="font-size:0.85rem; color:#555">${r.detalle}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Buscador
+    document.getElementById('buscador').addEventListener('input', function() {
+      const texto = this.value.toLowerCase();
+      const filas = document.querySelectorAll('#tabla-bitacora tr');
+      filas.forEach(fila => {
+        fila.style.display = fila.textContent.toLowerCase().includes(texto) ? '' : 'none';
+      });
+    });
+
+    // Limpiar bitácora
+    async function limpiarBitacora() {
+      if (!confirm('¿Seguro que deseas limpiar toda la bitácora? Esta acción no se puede deshacer.')) return;
+      try {
+        await fetch(API_URL, { method: 'DELETE' });
+        mostrarNotif('Bitácora limpiada correctamente', 'success');
+        cargarBitacora();
+      } catch (err) {
+        mostrarNotif('Error al limpiar la bitácora', 'error');
+      }
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('usuario');
+      localStorage.removeItem('rol');
+      window.location.href = 'login.html';
+    }
+
+    cargarBitacora();
+  </script>
+
+</body>
+</html>

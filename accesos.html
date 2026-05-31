@@ -15,10 +15,12 @@
       <img src="assets/logo.svg" alt="Nexus Guard" style="width:160px"/>
     </div>
     <nav class="sidebar-nav">
-      <a href="index.html"   class="nav-link">📊 Dashboard</a>
-      <a href="accesos.html" class="nav-link active">📅 Gestión de Citas</a>
-      <a onclick="cerrarSesion()" class="nav-link logout" style="cursor:pointer">🔓 Cerrar Sesión</a>
-    </nav>
+  <a href="index.html"    class="nav-link">📊 Dashboard</a>
+  <a href="accesos.html"  class="nav-link active">📅 Gestión de Citas</a>
+  <a href="usuarios.html" class="nav-link">👥 Gestión de Usuarios</a>
+  <a href="bitacora.html" class="nav-link">📋 Bitácora</a>
+  <a onclick="cerrarSesion()" class="nav-link logout" style="cursor:pointer">🔓 Cerrar Sesión</a>
+</nav>
   </aside>
 
   <main class="main-content">
@@ -117,6 +119,7 @@
         <thead>
           <tr>
             <th>ID</th>
+            <th>Folio</th>
             <th>Vigilante</th>
             <th>Empleado a Visitar</th>
             <th>Visitante</th>
@@ -128,7 +131,7 @@
         </thead>
         <tbody id="tabla-citas">
           <tr>
-            <td colspan="7"
+            <td colspan="9"
               style="text-align:center; color:#aaa; padding:30px">
               Cargando...
             </td>
@@ -142,8 +145,11 @@
 
   <script>
   if (!localStorage.getItem('token')) {
-    window.location.href = 'login.html';
-  }
+  window.location.href = 'login.html';
+}
+if (localStorage.getItem('rol') === 'vigilante') {
+  window.location.href = 'vigilante.html';
+}
 </script>
 
   <script src="js/accesos.js"></script>

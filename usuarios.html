@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestión de Usuarios — Nexus Guard</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+
+  <div class="notif-container" id="notif-container"></div>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="assets/logo.svg" alt="Nexus Guard" style="width:160px"
+        style="width:160px; filter:brightness(0) invert(1)"/>
+    </div>
+    <nav class="sidebar-nav">
+  <a href="index.html"    class="nav-link">📊 Dashboard</a>
+  <a href="accesos.html"  class="nav-link">📅 Gestión de Citas</a>
+  <a href="usuarios.html" class="nav-link active">👥 Gestión de Usuarios</a>
+  <a href="bitacora.html" class="nav-link">📋 Bitácora</a>
+  <a onclick="cerrarSesion()" class="nav-link logout" style="cursor:pointer">🔓 Cerrar Sesión</a>
+</nav>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div>
+        <a href="index.html" style="display:inline-flex; align-items:center; gap:6px;
+          color:#888; font-size:0.82rem; text-decoration:none; margin-bottom:6px">
+          ← Regresar al Dashboard
+        </a>
+        <h1>Gestión de Usuarios</h1>
+      </div>
+      <button class="btn btn-purple" id="btn-nuevo">+ Nuevo Usuario</button>
+    </header>
+
+    <!-- TARJETAS -->
+    <section class="cards-grid" style="grid-template-columns:repeat(3,1fr); margin-bottom:20px">
+      <div class="card card-accent">
+        <h3>Total Usuarios</h3>
+        <p class="card-number" id="total-usuarios">—</p>
+      </div>
+      <div class="card card-blue">
+        <h3>Administradores</h3>
+        <p class="card-number" id="total-admins">—</p>
+      </div>
+      <div class="card card-purple">
+        <h3>Vigilantes</h3>
+        <p class="card-number" id="total-vigilantes">—</p>
+      </div>
+    </section>
+
+    <!-- FORMULARIO -->
+    <section class="form-container" id="formulario" style="display:none">
+      <h2 id="form-titulo">Nuevo Usuario</h2>
+      <input type="hidden" id="usuario-id"/>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre Completo</label>
+          <input type="text" id="nombre" placeholder="Nombre completo"/>
+        </div>
+        <div class="form-group">
+          <label>Correo Electrónico</label>
+          <input type="email" id="email" placeholder="usuario@nexusguard.com"/>
+        </div>
+        <div class="form-group">
+          <label>Contraseña <span id="pass-hint" style="color:#aaa; font-weight:normal; font-size:0.78rem">(dejar vacío para no cambiar)</span></label>
+          <input type="password" id="password" placeholder="Mínimo 6 caracteres"/>
+        </div>
+        <div class="form-group">
+          <label>Rol</label>
+          <select id="rol">
+            <option value="admin">👨‍💼 Administrador</option>
+            <option value="vigilante">👮 Vigilante</option>
+          </select>
+        </div>
+      </div>
+      <p id="form-error"
+        style="color:#E74C3C; font-size:0.82rem; margin-top:10px; display:none">
+        Por favor llena todos los campos obligatorios
+      </p>
+      <div class="form-actions">
+        <button class="btn btn-primary" id="btn-guardar">💾 Guardar</button>
+        <button class="btn" style="background:#eee; color:#333" id="btn-cancelar">
+          Cancelar
+        </button>
+      </div>
+    </section>
+
+    <!-- TABLA -->
+    <section class="table-section">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Fecha de Registro</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-usuarios">
+          <tr>
+            <td colspan="6" style="text-align:center;color:#aaa;padding:30px">
+              Cargando...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <script>
+    // Protección de ruta — solo admins
+    if (!localStorage.getItem('token')) {
+      window.location.href = 'login.html';
+    }
+    if (localStorage.getItem('rol') !== 'admin') {
+      window.location.href = 'index.html';
+    }
+
+    const API_URL = 'http://localhost:3000/api/usuarios';
+
+    // ── Notificaciones ──
+    function mostrarNotif(mensaje, tipo = 'success') {
+      const container = document.getElementById('notif-container');
+      const iconos = { success: '✅', error: '❌', info: 'ℹ️' };
+      const notif = document.createElement('div');
+      notif.className = `notif notif-${tipo}`;
+      notif.innerHTML = `<span class="notif-icon">${iconos[tipo]}</span><span>${mensaje}</span>`;
+      notif.onclick = () => notif.remove();
+      container.appendChild(notif);
+      setTimeout(() => notif.remove(), 3000);
+    }
+
+    // ── Cargar usuarios ──
+    async function cargarUsuarios() {
+      try {
+        const res      = await fetch(API_URL);
+        const usuarios = await res.json();
+
+        document.getElementById('total-usuarios').textContent  = usuarios.length;
+        document.getElementById('total-admins').textContent    = usuarios.filter(u => u.rol === 'admin').length;
+        document.getElementById('total-vigilantes').textContent = usuarios.filter(u => u.rol === 'vigilante').length;
+
+        renderTabla(usuarios);
+      } catch (err) {
+        mostrarNotif('No se pudo conectar al servidor', 'error');
+      }
+    }
+
+    function renderTabla(usuarios) {
+      const tbody = document.getElementById('tabla-usuarios');
+      if (usuarios.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6"
+          style="text-align:center;color:#aaa;padding:30px">
+          Sin usuarios registrados
+        </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = usuarios.map((u, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td><strong>${u.nombre}</strong></td>
+          <td>${u.email}</td>
+          <td>
+            <span class="badge ${u.rol === 'admin' ? 'badge-confirmada' : 'badge-pendiente'}">
+              ${u.rol === 'admin' ? '👨‍💼 Admin' : '👮 Vigilante'}
+            </span>
+          </td>
+          <td>${u.creadoEn ? new Date(u.creadoEn).toLocaleDateString('es-MX') : '—'}</td>
+          <td style="display:flex; gap:6px">
+            <button class="btn btn-primary btn-sm"
+              onclick="editarUsuario('${u.id}')">✏️ Editar</button>
+            <button class="btn btn-danger btn-sm"
+              onclick="eliminarUsuario('${u.id}', '${u.nombre}')">🗑️ Eliminar</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ── Mostrar formulario nuevo ──
+    document.getElementById('btn-nuevo').onclick = () => {
+      limpiarFormulario();
+      document.getElementById('form-titulo').textContent    = 'Nuevo Usuario';
+      document.getElementById('pass-hint').style.display   = 'none';
+      document.getElementById('formulario').style.display  = 'block';
+      document.getElementById('form-error').style.display  = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    document.getElementById('btn-cancelar').onclick = () => {
+      document.getElementById('formulario').style.display = 'none';
+      limpiarFormulario();
+    };
+
+    // ── Guardar usuario ──
+    document.getElementById('btn-guardar').onclick = async () => {
+      const id       = document.getElementById('usuario-id').value;
+      const nombre   = document.getElementById('nombre').value.trim();
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const rol      = document.getElementById('rol').value;
+      const errorEl  = document.getElementById('form-error');
+
+      errorEl.style.display = 'none';
+
+      if (!nombre || !email || !rol) {
+        errorEl.style.display = 'block';
+        return;
+      }
+      if (!id && !password) {
+        errorEl.textContent   = 'La contraseña es obligatoria para nuevos usuarios';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      const datos = { nombre, email, rol };
+      if (password) datos.password = password;
+
+      const url    = id ? `${API_URL}/${id}` : API_URL;
+      const method = id ? 'PUT' : 'POST';
+
+      try {
+        const res  = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          errorEl.textContent   = data.mensaje || 'Error al guardar';
+          errorEl.style.display = 'block';
+          return;
+        }
+
+        document.getElementById('formulario').style.display = 'none';
+        limpiarFormulario();
+        mostrarNotif(id ? 'Usuario actualizado correctamente' : 'Usuario creado correctamente', 'success');
+        cargarUsuarios();
+      } catch (err) {
+        mostrarNotif('Error al guardar. Verifica el servidor.', 'error');
+      }
+    };
+
+    // ── Editar ──
+    async function editarUsuario(id) {
+      try {
+        const res     = await fetch(`${API_URL}/${id}`);
+        const usuario = await res.json();
+
+        document.getElementById('usuario-id').value = id;
+        document.getElementById('nombre').value     = usuario.nombre;
+        document.getElementById('email').value      = usuario.email;
+        document.getElementById('rol').value        = usuario.rol;
+        document.getElementById('password').value   = '';
+
+        document.getElementById('form-titulo').textContent   = 'Editar Usuario';
+        document.getElementById('pass-hint').style.display  = 'inline';
+        document.getElementById('formulario').style.display = 'block';
+        document.getElementById('form-error').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) {
+        mostrarNotif('No se pudo cargar el usuario', 'error');
+      }
+    }
+
+    // ── Eliminar ──
+    async function eliminarUsuario(id, nombre) {
+      if (!confirm(`¿Seguro que deseas eliminar a ${nombre}?`)) return;
+      try {
+        await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+        mostrarNotif('Usuario eliminado correctamente', 'success');
+        cargarUsuarios();
+      } catch (err) {
+        mostrarNotif('Error al eliminar', 'error');
+      }
+    }
+
+    function limpiarFormulario() {
+      ['usuario-id','nombre','email','password'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('rol').value = 'admin';
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('usuario');
+      localStorage.removeItem('rol');
+      window.location.href = 'login.html';
+    }
+
+    cargarUsuarios();
+  </script>
+
+</body>
+</html>
