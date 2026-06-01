@@ -5,12 +5,17 @@ const fs      = require('fs');
 const path    = require('path');
 const jwt     = require('jsonwebtoken');
 const router  = express.Router();
+const { crearNotificacion } = require('./notificaciones');
 
 const accesosPath = path.join(__dirname, '../data/accesos.json');
 
 function leerAccesos() {
-  const data = fs.readFileSync(accesosPath, 'utf-8');
-  return JSON.parse(data);
+    // Si el archivo no existe, lo crea automáticamente
+    if (!fs.existsSync(accesosPath)) {
+        fs.writeFileSync(accesosPath, '[]');
+    }
+    const data = fs.readFileSync(accesosPath, 'utf-8');
+    return JSON.parse(data);
 }
 
 function guardarAccesos(accesos) {
@@ -66,6 +71,15 @@ router.post('/', (req, res) => {
     detalle: `Nueva cita registrada para: ${req.body.visitante || req.body.nombre || '—'}`
   });
 
+  if (req.body.empleadoVisitar) {
+  crearNotificacion({
+    destinatario: req.body.empleadoVisitar,
+    titulo:       '📅 Nueva cita programada',
+    mensaje:      `${req.body.visitante || 'Un visitante'} de ${req.body.empresa || '—'} tiene una cita contigo el ${req.body.fecha} a las ${req.body.hora}. Folio: ${req.body.folio || '—'}`,
+    tipo:         'nueva_cita'
+  });
+}
+
   res.status(201).json(nuevoAcceso);
 });
 
@@ -85,6 +99,22 @@ router.put('/:id', (req, res) => {
     detalle: `Cita actualizada. Estado: ${req.body.estado || '—'}`
   });
 
+  if (accesos[index].empleadoVisitar && req.body.estado) {
+  const mensajes = {
+    'Confirmada': '✅ Tu cita fue confirmada',
+    'Rechazada':  '❌ Tu cita fue rechazada',
+    'Cancelada':  '🚫 Tu cita fue cancelada',
+    'Finalizada': '🏁 La visita ha finalizado'
+  };
+  if (mensajes[req.body.estado]) {
+    crearNotificacion({
+      destinatario: accesos[index].empleadoVisitar,
+      titulo:       mensajes[req.body.estado],
+      mensaje:      `La cita con ${accesos[index].visitante || '—'} (Folio: ${accesos[index].folio || '—'}) cambió a estado: ${req.body.estado}`,
+      tipo:         'cambio_estado'
+    });
+  }
+}
   res.json(accesos[index]);
 });
 

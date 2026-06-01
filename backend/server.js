@@ -33,6 +33,7 @@ app.use('/api/auth',    require('./routes/auth'));
 app.use('/api/accesos', require('./routes/accesos'));
 app.use('/api/usuarios', require('./routes/usuarios'));
 app.use('/api/bitacora', require('./routes/bitacora'));
+app.use('/api/notificaciones', require('./routes/notificaciones'));
 
 // Ruta de prueba
 app.get('/', (req, res) => {

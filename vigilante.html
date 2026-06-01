@@ -331,7 +331,9 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ horaEntrada: hora, estado: 'Confirmada' })
         });
+
         mostrarNotif(`✅ Entrada registrada a las ${hora}`, 'success');
+
         cargarCitasHoy();
         document.getElementById('resultado-validacion').style.display = 'none';
       } catch (err) {
@@ -395,6 +397,18 @@
             tipo:            'No Programada'
           })
         });
+
+        // Notificar al empleado a visitar
+await fetch('http://localhost:3000/api/notificaciones', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    destinatario: empleado,
+    titulo:       '⚠️ Visita no programada requiere autorización',
+    mensaje:      `${nombre} de ${empresa || '—'} llegó sin cita y solicita verte. Folio: ${folio}. Por favor autoriza o rechaza su acceso.`,
+    tipo:         'visita_no_programada'
+  })
+});
 
         mostrarNotif(`✅ Visita registrada. Folio: ${folio}`, 'success');
 

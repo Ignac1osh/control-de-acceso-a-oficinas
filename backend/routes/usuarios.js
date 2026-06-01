@@ -8,8 +8,12 @@ const router  = express.Router();
 const usuariosPath = path.join(__dirname, '../data/usuarios.json');
 
 function leerUsuarios() {
-  const data = fs.readFileSync(usuariosPath, 'utf-8');
-  return JSON.parse(data);
+    // Evita errores si borras el JSON de usuarios por accidente
+    if (!fs.existsSync(usuariosPath)) {
+        fs.writeFileSync(usuariosPath, '[]');
+    }
+    const data = fs.readFileSync(usuariosPath, 'utf-8');
+    return JSON.parse(data);
 }
 
 function guardarUsuarios(usuarios) {

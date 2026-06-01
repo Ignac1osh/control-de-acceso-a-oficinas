@@ -6,8 +6,12 @@ const router  = express.Router();
 const bitacoraPath = path.join(__dirname, '../data/bitacora.json');
 
 function leerBitacora() {
-  const data = fs.readFileSync(bitacoraPath, 'utf-8');
-  return JSON.parse(data);
+    // Si el archivo no existe, lo crea con un arreglo vacío
+    if (!fs.existsSync(bitacoraPath)) {
+        fs.writeFileSync(bitacoraPath, '[]');
+    }
+    const data = fs.readFileSync(bitacoraPath, 'utf-8');
+    return JSON.parse(data);
 }
 
 function guardarBitacora(registros) {
