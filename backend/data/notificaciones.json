@@ -1,1 +1,56 @@
-[]
+[
+  {
+    "id": "1780286142679",
+    "destinatario": "Ignacio Sanz Hernandez",
+    "titulo": "📅 Nueva cita programada",
+    "mensaje": "juan garcia de coca pepsi tiene una cita contigo el 2026-06-10 a las 15:30. Folio: SGC-4202",
+    "tipo": "nueva_cita",
+    "leida": true,
+    "fechaHora": "31/5/2026, 8:55:42 p.m."
+  },
+  {
+    "id": "1780286542102",
+    "destinatario": "Ignacio Sanz Hernandez",
+    "titulo": "📅 Nueva cita programada",
+    "mensaje": "don perez de pepsi tiene una cita contigo el 2026-05-31 a las 23:08. Folio: NP-4124",
+    "tipo": "nueva_cita",
+    "leida": true,
+    "fechaHora": "31/5/2026, 9:02:22 p.m."
+  },
+  {
+    "id": "1780286542113",
+    "destinatario": "Ignacio Sanz Hernandez",
+    "titulo": "⚠️ Visita no programada requiere autorización",
+    "mensaje": "don perez de pepsi llegó sin cita y solicita verte. Folio: NP-4124. Por favor autoriza o rechaza su acceso.",
+    "tipo": "visita_no_programada",
+    "leida": true,
+    "fechaHora": "31/5/2026, 9:02:22 p.m."
+  },
+  {
+    "id": "1780286675399",
+    "destinatario": "Ignacio Sanz Hernandez",
+    "titulo": "❌ Tu cita fue rechazada",
+    "mensaje": "La cita con juan garcia (Folio: SGC-4202) cambió a estado: Rechazada",
+    "tipo": "cambio_estado",
+    "leida": true,
+    "fechaHora": "31/5/2026, 9:04:35 p.m."
+  },
+  {
+    "id": "1780286719706",
+    "destinatario": "Ignacio Sanz Hernandez",
+    "titulo": "❌ Tu cita fue rechazada",
+    "mensaje": "La cita con don perez (Folio: NP-4124) cambió a estado: Rechazada",
+    "tipo": "cambio_estado",
+    "leida": true,
+    "fechaHora": "31/5/2026, 9:05:19 p.m."
+  },
+  {
+    "id": "1780286776573",
+    "destinatario": "Ignacio Sanz Hernandez",
+    "titulo": "🏁 La visita ha finalizado",
+    "mensaje": "La cita con don perez (Folio: NP-4124) cambió a estado: Finalizada",
+    "tipo": "cambio_estado",
+    "leida": true,
+    "fechaHora": "31/5/2026, 9:06:16 p.m."
+  }
+]

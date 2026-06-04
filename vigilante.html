@@ -125,14 +125,8 @@
         <div class="form-group">
           <label>Empleado a Visitar</label>
           <select id="np-empleado">
-            <option value="">Selecciona al empleado</option>
-            <option>Jesus Ramon Camarillo Nunez</option>
-            <option>Marco Gerardo Ceballos Valdez</option>
-            <option>Jesus Enrique Felix Olea</option>
-            <option>Claudia Guadalupe Romero</option>
-            <option>Ignacio Sanz Hernandez</option>
-            <option>Jose Luis Toscano Sosa</option>
-          </select>
+         <option value="">Cargando empleados...</option>
+        </select>
         </div>
         <div class="form-group">
           <label>Motivo de Visita</label>
@@ -434,6 +428,28 @@ await fetch('http://localhost:3000/api/notificaciones', {
 
     // ── Iniciar ──
     cargarCitasHoy();
+
+async function cargarEmpleados() {
+  try {
+    const res      = await fetch('http://localhost:3000/api/usuarios');
+    const usuarios = await res.json();
+    const admins   = usuarios.filter(u => u.rol === 'admin');
+    const select   = document.getElementById('np-empleado');
+
+    select.innerHTML = '<option value="">Selecciona al empleado</option>';
+    admins.forEach(u => {
+      const option       = document.createElement('option');
+      option.value       = u.nombre;
+      option.textContent = `${u.nombre} — ${u.area || 'Sin área'}`;
+      select.appendChild(option);
+    });
+  } catch (err) {
+    console.log('Error cargando empleados');
+  }
+}
+
+cargarEmpleados();
+
   </script>
 
 </body>
