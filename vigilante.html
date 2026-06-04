@@ -447,7 +447,30 @@ async function cargarEmpleados() {
     console.log('Error cargando empleados');
   }
 }
+async function cargarEmpleados() {
+  try {
+    const res      = await fetch('http://localhost:3000/api/usuarios');
+    const usuarios = await res.json();
+    const admins   = usuarios.filter(u => u.rol === 'admin');
+    const select   = document.getElementById('empleadoVisitar') 
+                     || document.getElementById('np-empleado');
 
+    if (!select) {
+      console.error('No se encontró el select de empleados');
+      return;
+    }
+
+    select.innerHTML = '<option value="">Selecciona al empleado</option>';
+    admins.forEach(u => {
+      const option       = document.createElement('option');
+      option.value       = u.nombre;
+      option.textContent = `${u.nombre} — ${u.area || 'Sin área'}`;
+      select.appendChild(option);
+    });
+  } catch (err) {
+    console.error('Error cargando empleados:', err.message);
+  }
+}
 cargarEmpleados();
 
   </script>

@@ -5,5 +5,68 @@
     "accion": "LOGIN",
     "detalle": "Inicio de sesion: isanz@nexusguard.com",
     "fechaHora": "3/6/2026, 9:52:50 p.m."
+  },
+  {
+    "id": "1780550023397",
+    "usuario": "Admin",
+    "accion": "CREAR_USUARIO",
+    "detalle": "Nuevo usuario creado: rose (admin)",
+    "fechaHora": "3/6/2026, 10:13:43 p.m."
+  },
+  {
+    "id": "1780550051751",
+    "usuario": "Admin",
+    "accion": "EDITAR_USUARIO",
+    "detalle": "Usuario actualizado: rose",
+    "fechaHora": "3/6/2026, 10:14:11 p.m."
+  },
+  {
+    "id": "1780550246726",
+    "usuario": "Admin",
+    "accion": "CREAR_USUARIO",
+    "detalle": "Nuevo usuario creado: rose (admin)",
+    "fechaHora": "3/6/2026, 10:17:26 p.m."
+  },
+  {
+    "id": "1780550319046",
+    "usuario": "Admin",
+    "accion": "CREAR_USUARIO",
+    "detalle": "Nuevo usuario creado: rose (admin)",
+    "fechaHora": "3/6/2026, 10:18:39 p.m."
+  },
+  {
+    "id": "1780550392851",
+    "usuario": "Admin",
+    "accion": "CREAR_USUARIO",
+    "detalle": "Nuevo usuario creado: rossedene (admin)",
+    "fechaHora": "3/6/2026, 10:19:52 p.m."
+  },
+  {
+    "id": "1780550440694",
+    "usuario": "Vigilante Caseta Principal",
+    "accion": "LOGIN",
+    "detalle": "Inicio de sesion: vigilancia1@nexusguard.com",
+    "fechaHora": "3/6/2026, 10:20:40 p.m."
+  },
+  {
+    "id": "1780550538909",
+    "usuario": "Ignacio Sanz Hernandez",
+    "accion": "LOGIN",
+    "detalle": "Inicio de sesion: isanz@nexusguard.com",
+    "fechaHora": "3/6/2026, 10:22:18 p.m."
+  },
+  {
+    "id": "1780550612806",
+    "usuario": "Ignacio Sanz Hernandez",
+    "accion": "LOGIN",
+    "detalle": "Inicio de sesion: isanz@nexusguard.com",
+    "fechaHora": "3/6/2026, 10:23:32 p.m."
+  },
+  {
+    "id": "1780550691279",
+    "usuario": "Ignacio Sanz Hernandez",
+    "accion": "LOGIN",
+    "detalle": "Inicio de sesion: isanz@nexusguard.com",
+    "fechaHora": "3/6/2026, 10:24:51 p.m."
   }
 ]

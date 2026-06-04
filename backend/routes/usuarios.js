@@ -39,7 +39,7 @@ router.get('/:id', (req, res) => {
 
 // ── POST /api/usuarios ── Crear
 router.post('/', async (req, res) => {
-  const { nombre, email, password, rol } = req.body;
+  const { nombre, email, password, rol, area } = req.body;
 
   if (!nombre || !email || !password || !rol) {
     return res.status(400).json({ mensaje: 'Todos los campos son obligatorios' });
@@ -53,13 +53,14 @@ router.post('/', async (req, res) => {
 
   const hash = await bcrypt.hash(password, 10);
   const nuevo = {
-    id: Date.now().toString(),
-    nombre,
-    email,
-    password: hash,
-    rol,
-    creadoEn: new Date().toISOString()
-  };
+  id: Date.now().toString(),
+  nombre,
+  email,
+  password: hash,
+  rol,
+  area: area || '',
+  creadoEn: new Date().toISOString()
+};
 
   usuarios.push(nuevo);
   guardarUsuarios(usuarios);
@@ -85,6 +86,7 @@ router.put('/:id', async (req, res) => {
   if (nombre)  usuarios[index].nombre = nombre;
   if (email)   usuarios[index].email  = email;
   if (rol)     usuarios[index].rol    = rol;
+  if (area !== undefined) usuarios[index].area = area;
   if (password) {
     usuarios[index].password = await bcrypt.hash(password, 10);
   }

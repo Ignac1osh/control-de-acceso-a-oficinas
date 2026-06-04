@@ -3,81 +3,81 @@
     "id": "1",
     "nombre": "Jesus Ramon Camarillo Nunez",
     "email": "jcamarillo@nexusguard.com",
-    "password": "$2b$10$wmYWpWZ991SSFhFMKEjBfe3UifhRVjirtZLJjX39/5c5l.4JhfRZq",
+    "password": "$2b$10$LcXmB4eO2N.sdFnDMO2cQ.F4Y5FT5uBOo1ZNLpsCg91O63p39WUnq",
     "rol": "admin",
     "area": "Sistemas",
-    "creadoEn": "2026-06-04T04:42:15.016Z"
+    "creadoEn": "2026-06-04T05:24:17.811Z"
   },
   {
     "id": "2",
     "nombre": "Marco Gerardo Ceballos Valdez",
     "email": "mceballos@nexusguard.com",
-    "password": "$2b$10$wmYWpWZ991SSFhFMKEjBfe3UifhRVjirtZLJjX39/5c5l.4JhfRZq",
+    "password": "$2b$10$LcXmB4eO2N.sdFnDMO2cQ.F4Y5FT5uBOo1ZNLpsCg91O63p39WUnq",
     "rol": "admin",
     "area": "Administración",
-    "creadoEn": "2026-06-04T04:42:15.016Z"
+    "creadoEn": "2026-06-04T05:24:17.811Z"
   },
   {
     "id": "3",
     "nombre": "Jesus Enrique Felix Olea",
     "email": "jfelix@nexusguard.com",
-    "password": "$2b$10$wmYWpWZ991SSFhFMKEjBfe3UifhRVjirtZLJjX39/5c5l.4JhfRZq",
+    "password": "$2b$10$LcXmB4eO2N.sdFnDMO2cQ.F4Y5FT5uBOo1ZNLpsCg91O63p39WUnq",
     "rol": "admin",
     "area": "Recursos Humanos",
-    "creadoEn": "2026-06-04T04:42:15.016Z"
+    "creadoEn": "2026-06-04T05:24:17.811Z"
   },
   {
     "id": "4",
     "nombre": "Claudia Guadalupe Romero",
     "email": "cromero@nexusguard.com",
-    "password": "$2b$10$wmYWpWZ991SSFhFMKEjBfe3UifhRVjirtZLJjX39/5c5l.4JhfRZq",
+    "password": "$2b$10$LcXmB4eO2N.sdFnDMO2cQ.F4Y5FT5uBOo1ZNLpsCg91O63p39WUnq",
     "rol": "admin",
     "area": "Contabilidad",
-    "creadoEn": "2026-06-04T04:42:15.016Z"
+    "creadoEn": "2026-06-04T05:24:17.811Z"
   },
   {
     "id": "5",
     "nombre": "Ignacio Sanz Hernandez",
     "email": "isanz@nexusguard.com",
-    "password": "$2b$10$wmYWpWZ991SSFhFMKEjBfe3UifhRVjirtZLJjX39/5c5l.4JhfRZq",
+    "password": "$2b$10$LcXmB4eO2N.sdFnDMO2cQ.F4Y5FT5uBOo1ZNLpsCg91O63p39WUnq",
     "rol": "admin",
     "area": "Desarrollo",
-    "creadoEn": "2026-06-04T04:42:15.016Z"
+    "creadoEn": "2026-06-04T05:24:17.811Z"
   },
   {
     "id": "6",
     "nombre": "Jose Luis Toscano Sosa",
     "email": "jtoscano@nexusguard.com",
-    "password": "$2b$10$wmYWpWZ991SSFhFMKEjBfe3UifhRVjirtZLJjX39/5c5l.4JhfRZq",
+    "password": "$2b$10$LcXmB4eO2N.sdFnDMO2cQ.F4Y5FT5uBOo1ZNLpsCg91O63p39WUnq",
     "rol": "admin",
     "area": "Dirección",
-    "creadoEn": "2026-06-04T04:42:15.016Z"
+    "creadoEn": "2026-06-04T05:24:17.811Z"
   },
   {
     "id": "7",
     "nombre": "Fidel Bojorquez Solis",
     "email": "fbojorquez@nexusguard.com",
-    "password": "$2b$10$wmYWpWZ991SSFhFMKEjBfe3UifhRVjirtZLJjX39/5c5l.4JhfRZq",
+    "password": "$2b$10$LcXmB4eO2N.sdFnDMO2cQ.F4Y5FT5uBOo1ZNLpsCg91O63p39WUnq",
     "rol": "admin",
     "area": "Docencia",
-    "creadoEn": "2026-06-04T04:42:15.016Z"
+    "creadoEn": "2026-06-04T05:24:17.811Z"
   },
   {
     "id": "8",
     "nombre": "Vigilante Caseta Principal",
     "email": "vigilancia1@nexusguard.com",
-    "password": "$2b$10$wmYWpWZ991SSFhFMKEjBfe3UifhRVjirtZLJjX39/5c5l.4JhfRZq",
+    "password": "$2b$10$LcXmB4eO2N.sdFnDMO2cQ.F4Y5FT5uBOo1ZNLpsCg91O63p39WUnq",
     "rol": "vigilante",
     "area": "Seguridad",
-    "creadoEn": "2026-06-04T04:42:15.016Z"
+    "creadoEn": "2026-06-04T05:24:17.811Z"
   },
   {
     "id": "9",
     "nombre": "Vigilante Caseta Secundaria",
     "email": "vigilancia2@nexusguard.com",
-    "password": "$2b$10$wmYWpWZ991SSFhFMKEjBfe3UifhRVjirtZLJjX39/5c5l.4JhfRZq",
+    "password": "$2b$10$LcXmB4eO2N.sdFnDMO2cQ.F4Y5FT5uBOo1ZNLpsCg91O63p39WUnq",
     "rol": "vigilante",
     "area": "Seguridad",
-    "creadoEn": "2026-06-04T04:42:15.016Z"
+    "creadoEn": "2026-06-04T05:24:17.811Z"
   }
 ]
